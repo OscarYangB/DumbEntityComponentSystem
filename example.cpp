@@ -21,12 +21,12 @@ int main() {
 	add_component(entity_2, Position{.x = 6.f});
 	add_component(entity_2, Color{.r = 125});
 
-	for (auto component : get_components<Position>()) {
-		std::cout << component->x << "\n";
+	for (auto [entity, position] : get_entities<Position>()) {
+		std::cout << position->x << "\n";
 	}
 
-	for (auto component : get_components<Color>()) {
-		std::cout << static_cast<int>(component->r) << "\n";
+	for (auto [entity, color] : get_entities<Color>()) {
+		std::cout << static_cast<int>(color->r) << "\n";
 	}
 
 	std::cout << sizeof(ComponentList<Position>::components) << "\n";
