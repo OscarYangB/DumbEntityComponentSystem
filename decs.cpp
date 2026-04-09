@@ -10,7 +10,12 @@ using EntityType = uint16_t;
 #define NULL_ENTITY 0
 constexpr EntityType MAX_ENTITIES = std::numeric_limits<EntityType>::max();
 
-//#ifdef DECS_IMPLEMENTATION
+extern std::bitset<MAX_ENTITIES> entity_id_used;
+uint64_t new_entity();
+bool is_valid_entity(EntityType entity);
+void delete_entity(EntityType entity);
+
+#ifdef ECS_IMPLEMENTATION
 std::bitset<MAX_ENTITIES> entity_id_used{};
 
 uint64_t new_entity() {
@@ -34,13 +39,13 @@ void delete_entity(EntityType entity) {
 	assert(is_valid_entity(entity));
 	entity_id_used[entity] = false;
 }
-//#endif
+#endif
 
 template<typename T>
 struct ComponentList {
-	inline static std::array<EntityType, MAX_ENTITIES> entities{};
-	inline static std::array<T, MAX_ENTITIES> components{};
-	inline static std::array<T*, MAX_ENTITIES> entity_component_map{};
+	inline static std::array<EntityType, MAX_ENTITIES> entities;
+	inline static std::array<T, MAX_ENTITIES> components;
+	inline static std::array<T*, MAX_ENTITIES> entity_component_map;
 	inline static EntityType size = 1;
 
 	static T& push_back(EntityType entity, T&& component) {
@@ -53,6 +58,7 @@ struct ComponentList {
 
 	static void remove(EntityType index) {
 		components[index] = components[size - 1];
+		components[size - 1] = {}; // Reinitialize destroyed component so destructor is called
 		entities[index] = entities[size - 1];
 		entity_component_map[index] = nullptr;
 		size--;

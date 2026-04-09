@@ -1,3 +1,4 @@
+#define ECS_IMPLEMENTATION
 #include "decs.cpp"
 #include <iostream>
 
