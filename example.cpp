@@ -1,5 +1,4 @@
-#define ECS_IMPLEMENTATION
-#include "decs.cpp"
+#include "ecs.h"
 #include <iostream>
 
 struct Position {
@@ -12,7 +11,6 @@ struct Color {
 	uint8_t g{};
 	uint8_t b{};
 };
-
 
 int main() {
 	auto entity = new_entity();

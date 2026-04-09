@@ -10,15 +10,9 @@ using EntityType = uint16_t;
 #define NULL_ENTITY 0
 constexpr EntityType MAX_ENTITIES = std::numeric_limits<EntityType>::max();
 
-extern std::bitset<MAX_ENTITIES> entity_id_used;
-uint64_t new_entity();
-bool is_valid_entity(EntityType entity);
-void delete_entity(EntityType entity);
+inline std::bitset<MAX_ENTITIES> entity_id_used{};
 
-#ifdef ECS_IMPLEMENTATION
-std::bitset<MAX_ENTITIES> entity_id_used{};
-
-uint64_t new_entity() {
+inline uint64_t new_entity() {
 	EntityType id = NULL_ENTITY;
 	for (EntityType i = 1; i < entity_id_used.size(); i++) {
 		if (!entity_id_used[i]) {
@@ -31,15 +25,14 @@ uint64_t new_entity() {
 	return id;
 }
 
-bool is_valid_entity(EntityType entity) {
+inline bool is_valid_entity(EntityType entity) {
 	return entity_id_used[entity];
 }
 
-void delete_entity(EntityType entity) {
+inline void delete_entity(EntityType entity) {
 	assert(is_valid_entity(entity));
 	entity_id_used[entity] = false;
 }
-#endif
 
 template<typename T>
 struct ComponentList {
