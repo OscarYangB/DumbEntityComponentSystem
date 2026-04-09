@@ -28,7 +28,12 @@ int main() {
 		std::cout << static_cast<int>(color->r) << "\n";
 	}
 
-	std::cout << sizeof(ComponentList<Position>::components) << "\n";
-	std::cout << sizeof(ComponentList<Position>::entities) << "\n";
+	sort<Position>([](const Position& first, const Position& second) { return first.x > second.y; });
+
+	for (auto [entity, position] : get_entities<Position>()) {
+		std::cout << position->x << "\n";
+	}
+
+
 	return 0;
 }
