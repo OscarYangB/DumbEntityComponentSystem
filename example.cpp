@@ -37,7 +37,7 @@ int main() {
 		std::cout << static_cast<int>(color->r) << "\n";
 	}
 
-	sort<Position>([](const Position& first, const Position& second) { return first.x > second.x; });
+	sort<Position>([](const Position& first, const Position& second) { return first.x < second.x; });
 
 	for (auto [entity, position] : get_entities<Position>()) {
 		std::cout << position->x << "\n";

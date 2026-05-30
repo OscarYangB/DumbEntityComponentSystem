@@ -115,11 +115,12 @@ void remove_component(EntityType entity) {
 
 template<typename... T>
 std::vector<std::tuple<EntityType, T*...>> get_entities() {
-	std::vector<std::tuple<EntityType, T*...>> result{};
+	std::vector<EntityType> found_entities{};
 
 	bool first_iteration = true;
-	([&result, &first_iteration]() {
+	([&found_entities, &first_iteration]() {
 		if (first_iteration) {
+			found_entities.reserve(ComponentList<T>::size);
 			for (EntityType i = 1; i < ComponentList<T>::size; i++) {
 				while (!is_valid_entity(ComponentList<T>::get_entity(i)) && i < ComponentList<T>::size) {
 					ComponentList<T>::remove(i);
@@ -127,19 +128,25 @@ std::vector<std::tuple<EntityType, T*...>> get_entities() {
 				if (i >= ComponentList<T>::size) {
 					break;
 				}
-				result.emplace_back(ComponentList<T>::get_entity(i), ComponentList<T>::get_component(i)...);
+				found_entities.emplace_back(ComponentList<T>::get_entity(i));
 			}
 		}
 		first_iteration = false;
 	}(), ...);
 
-	result.erase(std::remove_if(result.begin(), result.end(), [&result](const auto& pair) {
+	found_entities.erase(std::remove_if(found_entities.begin(), found_entities.end(), [&found_entities](EntityType entity) {
 		bool found = true;
-		found &= ([&pair]() {
-			return ComponentList<T>::has_entity(std::get<EntityType>(pair));
+		found &= ([&entity]() {
+			return ComponentList<T>::has_entity(entity);
 		}(), ...);
 		return !found;
-	}), result.end());
+	}), found_entities.end());
+
+	std::vector<std::tuple<EntityType, T*...>> result{};
+	result.reserve(found_entities.size());
+	for (EntityType entity : found_entities) {
+		result.emplace_back(entity, ComponentList<T>::get_component(ComponentList<T>::entity_to_data_index_map[entity])...);
+	}
 
 	return result;
 }
